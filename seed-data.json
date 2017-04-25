@@ -1,0 +1,8 @@
+{
+      "title": "some title",
+      "content": "a bunch of amazing words",
+      "author": {
+          "firstName": "Sarah",
+          "lastName": "Clarke"
+      }
+  }

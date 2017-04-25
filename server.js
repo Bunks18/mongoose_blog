@@ -9,15 +9,15 @@ mongoose.Promise = global.Promise;
 // config.js is where we control constants for entire
 // app like PORT and DATABASE_URL
 const {PORT, DATABASE_URL} = require('./config');
-const {Restaurant} = require('./models');
+const {Blog} = require('./models');
 
 const app = express();
 app.use(bodyParser.json());
 
 
 // GET requests to /restaurants => return 10 restaurants
-app.get('/restaurants', (req, res) => {
-  Restaurant
+app.get('/blogs', (req, res) => {
+  Blog
     .find()
     // we're limiting because restaurants db has > 25,000
     // documents, and that's too much to process/return
@@ -26,10 +26,10 @@ app.get('/restaurants', (req, res) => {
     // success callback: for each restaurant we got back, we'll
     // call the `.apiRepr` instance method we've created in
     // models.js in order to only expose the data we want the API return.
-    .then(restaurants => {
+    .then(blogs => {
       res.json({
-        restaurants: restaurants.map(
-          (restaurant) => restaurant.apiRepr())
+        blogs: blogs.map(
+          (blog) => blog.apiRepr())
       });
     })
     .catch(
@@ -40,13 +40,13 @@ app.get('/restaurants', (req, res) => {
 });
 
 // can also request by ID
-app.get('/restaurants/:id', (req, res) => {
-  Restaurant
+app.get('/blogs/:id', (req, res) => {
+  Blog
     // this is a convenience method Mongoose provides for searching
     // by the object _id property
     .findById(req.params.id)
     .exec()
-    .then(restaurant =>res.json(restaurant.apiRepr()))
+    .then(blog =>res.json(blog.apiRepr()))
     .catch(err => {
       console.error(err);
         res.status(500).json({message: 'Internal server error'})
@@ -54,9 +54,9 @@ app.get('/restaurants/:id', (req, res) => {
 });
 
 
-app.post('/restaurants', (req, res) => {
+app.post('/blogs', (req, res) => {
 
-  const requiredFields = ['name', 'borough', 'cuisine'];
+  const requiredFields = ['title', 'content'];
   for (let i=0; i<requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
@@ -66,15 +66,13 @@ app.post('/restaurants', (req, res) => {
     }
   }
 
-  Restaurant
+  Blog
     .create({
-      name: req.body.name,
-      borough: req.body.borough,
-      cuisine: req.body.cuisine,
-      grades: req.body.grades,
-      address: req.body.address})
+      title: req.body.title,
+      content: req.body.content,
+      author: req.body.author})
     .then(
-      restaurant => res.status(201).json(restaurant.apiRepr()))
+      blog => res.status(201).json(blog.apiRepr()))
     .catch(err => {
       console.error(err);
       res.status(500).json({message: 'Internal server error'});
@@ -82,7 +80,7 @@ app.post('/restaurants', (req, res) => {
 });
 
 
-app.put('/restaurants/:id', (req, res) => {
+app.put('/blogs/:id', (req, res) => {
   // ensure that the id in the request path and the one in request body match
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
     const message = (
@@ -96,7 +94,7 @@ app.put('/restaurants/:id', (req, res) => {
   // if the user sent over any of the updatableFields, we udpate those values
   // in document
   const toUpdate = {};
-  const updateableFields = ['name', 'borough', 'cuisine', 'address'];
+  const updateableFields = ['title', 'content'];
 
   updateableFields.forEach(field => {
     if (field in req.body) {
@@ -104,19 +102,19 @@ app.put('/restaurants/:id', (req, res) => {
     }
   });
 
-  Restaurant
+  Blog
     // all key/value pairs in toUpdate will be updated -- that's what `$set` does
     .findByIdAndUpdate(req.params.id, {$set: toUpdate})
     .exec()
-    .then(restaurant => res.status(204).end())
+    .then(blog => res.status(204).end())
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
-app.delete('/restaurants/:id', (req, res) => {
-  Restaurant
+app.delete('/blogs/:id', (req, res) => {
+  Blog
     .findByIdAndRemove(req.params.id)
     .exec()
-    .then(restaurant => res.status(204).end())
+    .then(blog => res.status(204).end())
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
