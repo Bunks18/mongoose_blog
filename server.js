@@ -28,6 +28,7 @@ app.use(bodyParser.json());
 //       res.status(500).json({message : 'Internal server error'});
 //     });
 // });
+
 app.get('/posts', (req, res) => {
 
   BlogPost
@@ -40,7 +41,6 @@ app.get('/posts', (req, res) => {
       console.error(err);
       res.status(500).json({error: 'something went terribly wrong'});
     });
-    console.log(res);
 });
 
 ///get post by ID
