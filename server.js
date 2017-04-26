@@ -45,7 +45,7 @@ app.get('/posts', (req, res) => {
 
 ///get post by ID
 
-app.get('posts/:id', (req, res) =>{
+app.get('/posts/:id', (req, res) =>{
   BlogPost
   .findById(req.params.id)
   .exec()
@@ -91,7 +91,7 @@ app.post('/posts', (req, res) =>{
           `Request path id (${req.params.id}) and request body id` +
           `(${red.body.id}) msut match`);
           console.error(message);
-          res.status(400).json({message:message});
+          res.status(400).json({message: message});
       }
 
       const toUpdate = {};
@@ -106,7 +106,7 @@ app.post('/posts', (req, res) =>{
       BlogPost
       .findByIdAndUpdate(req.params.id, {$set: toUpdate})
       .exec()
-      .then(UpdatedPost => res.status(204).json(updatedPost.apiRepr()))
+      .then(UpdatedPost => res.status(204).json(UpdatedPost.apiRepr()))
       .catch(err => res.status(500).json({message: 'Internal server error'}));
     });
 
