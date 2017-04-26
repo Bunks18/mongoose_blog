@@ -29,6 +29,7 @@ app.use(bodyParser.json());
 //     });
 // });
 app.get('/posts', (req, res) => {
+
   BlogPost
     .find()
     .exec()
@@ -39,6 +40,7 @@ app.get('/posts', (req, res) => {
       console.error(err);
       res.status(500).json({error: 'something went terribly wrong'});
     });
+    console.log(res);
 });
 
 ///get post by ID
